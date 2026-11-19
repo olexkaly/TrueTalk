@@ -41,13 +41,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onSelectTab, cl
 
   return (
     <nav
-      className={`mx-auto w-fit max-w-[92vw] sm:max-w-[640px] bg-[#005b9c] rounded-[18px] sm:rounded-[22px] p-1.5 sm:p-2 shadow-[0_10px_30px_rgba(0,91,156,0.30)] border border-white/15 flex items-center justify-center gap-1 sm:gap-2 z-30 transition-all ${
-        /* On mobile (<640px), dock 12px above bottom with safe-area padding; on desktop, flow naturally */
-        'max-sm:fixed max-sm:bottom-3 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:z-40 max-sm:w-[calc(100%-24px)] max-sm:max-w-md'
-      } ${className}`}
-      style={{
-        paddingBottom: 'calc(6px + env(safe-area-inset-bottom, 0px))'
-      }}
+      className={`mx-auto w-fit max-w-[94vw] sm:max-w-[640px] bg-[#005b9c] rounded-[18px] sm:rounded-[22px] p-1.5 sm:p-2 shadow-[0_10px_30px_rgba(0,91,156,0.35)] border border-white/20 flex items-center justify-center gap-1 sm:gap-2 z-50 transition-all ${className}`}
       aria-label={t('nav.ariaNav')}
     >
       {navItems.map((item) => {

@@ -293,13 +293,7 @@ export default function Home() {
   ], [t]);
 
   return (
-    <div
-      className={`bg-[#dcebf6] text-[#0b2540] flex flex-col font-sans relative ${
-        !result && activeTab === 'verify'
-          ? 'h-[100dvh] max-h-[100dvh] overflow-hidden'
-          : 'min-h-[100dvh] overflow-x-hidden'
-      }`}
-    >
+    <div className="min-h-[100dvh] bg-[#dcebf6] text-[#0b2540] flex flex-col font-sans relative overflow-x-hidden">
       {/* 1. Navigation Header (Top Bar: #005b9c) */}
       <Header
         onOpenWhyModal={() => setIsWhyModalOpen(true)}
@@ -308,13 +302,7 @@ export default function Home() {
       />
 
       {/* Main Page Wrapper */}
-      <main
-        className={`flex-1 w-full flex flex-col relative z-10 ${
-          !result && activeTab === 'verify'
-            ? 'overflow-hidden pb-16 sm:pb-6'
-            : 'pb-20 sm:pb-12'
-        }`}
-      >
+      <main className="flex-1 w-full flex flex-col relative z-10 pb-28 sm:pb-12">
         {/* Dynamic Tab Body */}
         {activeTab === 'brand_shield' ? (
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full space-y-8">
@@ -328,10 +316,6 @@ export default function Home() {
                 handleVerify(claim);
               }}
             />
-            {/* Floating Navigation Pill */}
-            <div className="pt-4 flex justify-center">
-              <BottomNav activeTab={activeTab} onSelectTab={(tab) => setActiveTab(tab)} />
-            </div>
           </div>
         ) : activeTab === 'about' ? (
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full space-y-8">
@@ -348,10 +332,6 @@ export default function Home() {
               }}
               onOpenPagaModal={() => setIsPagaModalOpen(true)}
             />
-            {/* Floating Navigation Pill */}
-            <div className="pt-4 flex justify-center">
-              <BottomNav activeTab={activeTab} onSelectTab={(tab) => setActiveTab(tab)} />
-            </div>
           </div>
         ) : activeTab === 'heatmap' ? (
           <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full space-y-6">
@@ -372,16 +352,12 @@ export default function Home() {
                 }}
               />
             </div>
-            {/* Floating Navigation Pill */}
-            <div className="pt-4 flex justify-center">
-              <BottomNav activeTab={activeTab} onSelectTab={(tab) => setActiveTab(tab)} />
-            </div>
           </div>
         ) : (
           /* Main Landing Page (Hero + Claim Verification Engine + Decorative Background) */
           <div
             className={`relative w-full flex-1 flex flex-col justify-center px-4 sm:px-6 ${
-              !result ? 'overflow-hidden py-1 sm:py-4 my-auto' : 'py-4 sm:py-8'
+              !result ? 'py-2 sm:py-6 my-auto' : 'py-4 sm:py-8'
             }`}
           >
             {/* Background Graphics */}
@@ -645,15 +621,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Floating Bottom Navigation Pill (Desktop flow, fixed on mobile) */}
-            <div className="pt-2 sm:pt-4 flex justify-center">
-              <BottomNav
-                activeTab={activeTab}
-                onSelectTab={(tab) => setActiveTab(tab)}
-              />
-            </div>
-
-              {/* Verification Result Section */}
+            {/* Verification Result Section */}
               {result && (() => {
                 const currentResultIsPidgin = (resultDisplayLang || locale) === 'pcm';
                 return (
@@ -803,6 +771,16 @@ export default function Home() {
           </div>
         )}
       </main>
+
+      {/* Persistent Floating Bottom Navigation Pill (Fixed on mobile with safe-area padding, centered on desktop) */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none flex justify-center pb-[max(12px,env(safe-area-inset-bottom,12px))] px-3 sm:static sm:pointer-events-auto sm:pb-8 sm:px-0">
+        <div className="pointer-events-auto">
+          <BottomNav
+            activeTab={activeTab}
+            onSelectTab={(tab) => setActiveTab(tab)}
+          />
+        </div>
+      </div>
 
       {/* Modals */}
       <WhyTruetalkModal

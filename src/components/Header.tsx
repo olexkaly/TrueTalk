@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Globe, Crown, ChevronDown, Check, HelpCircle, Map, Play } from 'lucide-react';
+import { Globe, Crown, ChevronDown, Check, HelpCircle, CreditCard } from 'lucide-react';
 import { useLanguage, AppLanguage } from '@/context/LanguageContext';
 
 interface HeaderProps {
@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenPagaModal,
   onNavigateTab
 }) => {
-  const { locale, setLocale, t } = useLanguage();
+  const { locale, setLocale, t, isPidgin } = useLanguage();
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -267,35 +267,24 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
               )}
 
-              {/* View 36-State Map Link */}
-              <div className="py-2.5">
-                <Link
-                  href="/map"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-between text-left py-1 text-white hover:text-white/80"
-                >
-                  <div className="flex items-center space-x-2">
-                    <Map className="w-4 h-4 text-[#a3d3fc]" />
-                    <span>{t('header.navMap')}</span>
-                  </div>
-                  <span className="text-xs text-white/60">→</span>
-                </Link>
-              </div>
-
-              {/* How to Use Tutorial Link */}
-              <div className="py-2.5">
-                <Link
-                  href="/how-to-use"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-between text-left py-1 text-white hover:text-white/80"
-                >
-                  <div className="flex items-center space-x-2">
-                    <Play className="w-4 h-4 text-[#a3d3fc] fill-[#a3d3fc]" />
-                    <span>{t('header.navHowToUse')}</span>
-                  </div>
-                  <span className="text-xs text-white/60">→</span>
-                </Link>
-              </div>
+              {/* Paga Payment Infrastructure Link */}
+              {onOpenPagaModal && (
+                <div className="py-2.5">
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      onOpenPagaModal();
+                    }}
+                    className="w-full flex items-center justify-between text-left py-1 text-white hover:text-white/80 cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <CreditCard className="w-4 h-4 text-[#a3d3fc]" />
+                      <span>{isPidgin ? 'Paga Payment Infrastructure' : 'Paga Payment Infrastructure'}</span>
+                    </div>
+                    <span className="text-xs text-white/60">→</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Paga Plus Primary Button in Drawer */}

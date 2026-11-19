@@ -296,14 +296,6 @@ export function BrandShieldDashboard({ onOpenSubscriptionModal, appLanguage, ini
       <div className="p-5 sm:p-7 rounded-[24px] sm:rounded-[28px] bg-gradient-to-r from-[#005b9c] to-[#0b2540] text-white shadow-lg border border-white/20 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 flex-wrap">
-              {lastScannedTime && (
-                <span className="text-[11px] text-white/75 flex items-center gap-1 font-mono">
-                  <Activity className="w-3 h-3 text-emerald-300 animate-pulse" /> Live Telemetry ({lastScannedTime})
-                </span>
-              )}
-            </div>
-
             <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
               {isPidgin ? 'Brand Shield: Live Misinformation & Crisis Radar' : 'Brand Shield: Real-Time Crisis & Disinformation Radar'}
             </h2>
