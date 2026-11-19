@@ -51,6 +51,7 @@ export default function Home() {
   const [isRingFlashing, setIsRingFlashing] = useState(false);
   const [activeVerificationStage, setActiveVerificationStage] = useState(0);
   const [result, setResult] = useState<VerificationResult | null>(null);
+  const [resultDisplayLang, setResultDisplayLang] = useState<'en' | 'pcm' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isListening, setIsListening] = useState(false);
   const [showAllSources, setShowAllSources] = useState(false);
@@ -175,6 +176,7 @@ export default function Home() {
 
       const data = await res.json();
       setResult(data);
+      setResultDisplayLang(activeReqLocale);
 
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -187,12 +189,9 @@ export default function Home() {
     }
   };
 
-  const handleTranslateResult = async () => {
+  const handleTranslateResult = () => {
     if (!result) return;
-    setIsTranslatingResult(true);
-    const targetLocale = locale;
-    await handleVerify(result.query || result.extractedClaim.normalizedClaim, targetLocale);
-    setIsTranslatingResult(false);
+    setResultDisplayLang((prev) => ((prev || locale) === 'pcm' ? 'en' : 'pcm'));
   };
 
   const handleImageFile = (file: File) => {
@@ -260,6 +259,7 @@ export default function Home() {
     setSelectedImage(null);
     setImageFileName(null);
     setResult(null);
+    setResultDisplayLang(null);
     setError(null);
     setShowAllSources(false);
     setShowPipeline(false);
@@ -406,10 +406,10 @@ export default function Home() {
                       className="lang-fade-in text-[clamp(24px,5.8vw,52px)] font-bold text-[#0b2540] tracking-tight leading-[1.14] max-w-3xl mx-auto select-none"
                     >
                       {parts[0]}
-                      <span className="relative inline-block text-[#005b9c]">
+                      <span className="relative inline-block text-[#0fbf4d]">
                         {highlightWord}
                         <svg
-                          className="absolute -bottom-1 left-0 w-full h-2.5 text-[#005b9c] overflow-visible"
+                          className="absolute -bottom-1 left-0 w-full h-2.5 text-[#0fbf4d] overflow-visible"
                           viewBox="0 0 120 12"
                           fill="none"
                         >
@@ -584,7 +584,7 @@ export default function Home() {
                     <button
                       onClick={() => handleVerify()}
                       disabled={loading || (!query.trim() && !selectedImage)}
-                      className={`send-btn-container w-11 h-11 sm:w-12 sm:h-12 rounded-[14px] sm:rounded-[16px] bg-[#005b9c] hover:bg-[#00477e] text-white grid place-items-center transition-colors shadow-md shadow-blue-500/20 disabled:opacity-40 disabled:pointer-events-none shrink-0 ml-1 overflow-hidden cursor-pointer ${
+                      className={`send-btn-container w-11 h-11 sm:w-12 sm:h-12 rounded-[14px] sm:rounded-[16px] bg-[#0fbf4d] hover:bg-[#0da843] text-white grid place-items-center transition-colors shadow-md shadow-emerald-500/25 disabled:opacity-40 disabled:pointer-events-none shrink-0 ml-1 overflow-hidden cursor-pointer ${
                         isFlying ? 'is-submitting' : ''
                       } ${loading ? 'is-loading' : ''}`}
                       title={loading ? t('engine.sendBtnLoading') : t('engine.sendBtn')}
@@ -630,17 +630,12 @@ export default function Home() {
                 </div>
 
                 {/* Soft Filled Chips */}
-                <div
-                  className="flex items-center gap-2 overflow-x-auto pt-1.5 pb-2 -mt-1.5 -mb-2 pr-8 pl-1 scrollbar-none snap-x"
-                  style={{
-                    maskImage: 'linear-gradient(to right, transparent, black 8px, black calc(100% - 24px), transparent)'
-                  }}
-                >
+                <div className="flex items-center gap-2 overflow-x-auto py-1 px-0.5 scrollbar-none snap-x">
                   {viralChips.map((p) => (
                     <button
                       key={p.id}
                       onClick={() => handleApplyPreset(p.prompt)}
-                      className="flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-[12px] sm:rounded-[14px] bg-[#005b9c]/[0.08] hover:bg-[#005b9c]/[0.14] text-[#005b9c] text-xs sm:text-[13px] font-medium whitespace-nowrap transition-transform duration-200 hover:-translate-y-[2px] hover:shadow-xs active:translate-y-0 shrink-0 snap-start cursor-pointer"
+                      className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-[12px] sm:rounded-[14px] bg-[#005b9c]/[0.08] hover:bg-[#005b9c]/[0.14] text-[#005b9c] text-xs sm:text-[13px] font-medium whitespace-nowrap transition-transform duration-200 hover:-translate-y-[2px] hover:shadow-xs active:translate-y-0 shrink-0 snap-start cursor-pointer"
                     >
                       <Flame className="w-3.5 h-3.5 text-[#005b9c] shrink-0" />
                       <span>{p.prompt}</span>
@@ -659,7 +654,9 @@ export default function Home() {
             </div>
 
               {/* Verification Result Section */}
-              {result && (
+              {result && (() => {
+                const currentResultIsPidgin = (resultDisplayLang || locale) === 'pcm';
+                return (
                 <div ref={resultRef} className="pt-4 sm:pt-6 space-y-4 animate-result-enter">
                   <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-[#D5E7FA] shadow-md space-y-4 sm:space-y-5">
                     {/* Result Header: Verdict & Confidence */}
@@ -670,18 +667,14 @@ export default function Home() {
                             {t('results.officialVerdict')}
                           </span>
 
-                          {/* Quick translate result toggle */}
+                          {/* Quick translate result toggle (Instant Client-Side Switch) */}
                           <button
                             onClick={handleTranslateResult}
-                            disabled={isTranslatingResult}
                             className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#005b9c] hover:underline cursor-pointer"
                           >
                             <Languages className="w-3 h-3" />
                             <span>
-                              {isTranslatingResult 
-                                ? t('results.translating') 
-                                : t('results.translateResult', { lang: isPidgin ? 'English' : 'Naija Pidgin' })
-                              }
+                              {t('results.translateResult', { lang: currentResultIsPidgin ? 'English' : 'Naija Pidgin' })}
                             </span>
                           </button>
 
@@ -692,11 +685,11 @@ export default function Home() {
                             title="Share to WhatsApp"
                           >
                             <Share2 className="w-3 h-3" />
-                            <span>{isPidgin ? 'Share for WhatsApp' : 'Share on WhatsApp'}</span>
+                            <span>{currentResultIsPidgin ? 'Share for WhatsApp' : 'Share on WhatsApp'}</span>
                           </button>
                         </div>
                         <div>
-                          <VerdictBadge verdict={result.verdict} size="lg" isPidgin={isPidgin} />
+                          <VerdictBadge verdict={result.verdict} size="lg" isPidgin={currentResultIsPidgin} />
                         </div>
                       </div>
 
@@ -707,7 +700,7 @@ export default function Home() {
                         <button
                           onClick={handleClear}
                           className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
-                          title={isPidgin ? 'Clear result and question' : 'Clear result and question'}
+                          title={currentResultIsPidgin ? 'Clear result and question' : 'Clear result and question'}
                           aria-label="Clear result and question"
                         >
                           <X className="w-4 h-4" />
@@ -728,10 +721,10 @@ export default function Home() {
 
                       <div className="pt-2 border-t border-[#D5E7FA]/80">
                         <span className="text-[10px] font-mono font-bold text-[#005b9c] uppercase tracking-wider">
-                          {isPidgin ? 'Di Verified Truth:' : 'The Verified Fact:'}
+                          {currentResultIsPidgin ? 'Di Verified Truth:' : 'The Verified Fact:'}
                         </span>
                         <p className="text-xs sm:text-sm text-[#0b2540] font-medium leading-relaxed mt-0.5">
-                          {isPidgin && result.pidginExplanation 
+                          {currentResultIsPidgin && result.pidginExplanation 
                             ? result.pidginExplanation 
                             : result.shortExplanation
                           }
@@ -739,7 +732,7 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Pidgin / English Audio Player */}
+                    {/* Vernacular Dialect Audio Player */}
                     {(result.pidginExplanation || result.multilingualExplanations) && (
                       <PidginVoicePlayer
                         pidginText={result.pidginExplanation || result.shortExplanation}
@@ -747,7 +740,7 @@ export default function Home() {
                         multilingual={result.multilingualExplanations}
                         claimEntity={result.extractedClaim.entity}
                         verdict={result.verdict}
-                        selectedLang={isPidgin ? 'pcm' : 'en'}
+                        selectedLang={currentResultIsPidgin ? 'pcm' : 'en'}
                       />
                     )}
 
@@ -785,8 +778,8 @@ export default function Home() {
                             >
                               <span>
                                 {showAllSources 
-                                  ? (isPidgin ? 'See less' : 'See less') 
-                                  : (isPidgin ? `See more (${result.evidence.length - 1} more sources)` : `See more (${result.evidence.length - 1} more sources)`)
+                                  ? (currentResultIsPidgin ? 'See less' : 'See less') 
+                                  : (currentResultIsPidgin ? `See more (${result.evidence.length - 1} more sources)` : `See more (${result.evidence.length - 1} more sources)`)
                                 }
                               </span>
                               {showAllSources ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -796,28 +789,7 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* Optional: Pipeline Transparency Inspector (Does NOT show by default; only shows if user clicks See more) */}
-                    <div className="pt-2 border-t border-[#D5E7FA]/60">
-                      <div className="flex items-center justify-between px-1">
-                        <span className="text-[11px] text-[#4a6076] font-medium">
-                          {isPidgin ? 'Pipeline transparency details' : 'Pipeline transparency inspector'}
-                        </span>
-                        <button
-                          onClick={() => setShowPipeline(!showPipeline)}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-[#005b9c] hover:underline cursor-pointer"
-                        >
-                          <span>{showPipeline ? 'See less' : 'See more'}</span>
-                          {showPipeline ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                        </button>
-                      </div>
-                      {showPipeline && (
-                        <div className="pt-2.5 animate-in fade-in">
-                          <PipelineInspector result={result} />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Paga Financial Fraud Card */}
+                    {/* Paga Financial Fraud Card (when detected) */}
                     {result.paymentVerification && (
                       <div className="pt-2 border-t border-[#D5E7FA]">
                         <PagaPaymentCard payment={result.paymentVerification} />
@@ -825,7 +797,8 @@ export default function Home() {
                     )}
                   </div>
                 </div>
-              )}
+                );
+              })()}
             </div>
           </div>
         )}

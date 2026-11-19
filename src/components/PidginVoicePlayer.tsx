@@ -19,7 +19,14 @@ export function PidginVoicePlayer({ pidginText, englishText, multilingual, claim
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoiceIndex, setSelectedVoiceIndex] = useState<number>(0);
   const [voiceLabel, setVoiceLabel] = useState<string>('Google Maps Nigeria Voice');
+  const [currentDialect, setCurrentDialect] = useState<'en' | 'pcm' | 'yo' | 'ha' | 'ig'>(selectedLang || 'pcm');
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  useEffect(() => {
+    if (selectedLang) {
+      setCurrentDialect(selectedLang);
+    }
+  }, [selectedLang]);
 
   const langToModeMap: Record<string, 'english' | 'pidgin' | 'yoruba' | 'hausa' | 'igbo'> = {
     en: 'english',
@@ -29,7 +36,7 @@ export function PidginVoicePlayer({ pidginText, englishText, multilingual, claim
     ig: 'igbo'
   };
 
-  const mode = langToModeMap[selectedLang] || 'english';
+  const mode = langToModeMap[currentDialect] || 'english';
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
@@ -193,10 +200,10 @@ export function PidginVoicePlayer({ pidginText, englishText, multilingual, claim
         <div className="flex items-center gap-3">
           <button
             onClick={handleTogglePlay}
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-md shrink-0 active:scale-95 ${
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-md shrink-0 active:scale-95 cursor-pointer ${
               isPlaying
-                ? 'bg-[#005A9C] text-white animate-pulse ring-2 ring-[#005A9C]/40'
-                : 'bg-[#005A9C] hover:bg-[#00477E] text-white'
+                ? 'bg-[#0fbf4d] text-white animate-pulse ring-2 ring-[#0fbf4d]/40'
+                : 'bg-[#0fbf4d] hover:bg-[#0da843] text-white'
             }`}
             title={isPlaying ? 'Pause Audio' : 'Listen Aloud in Local Language'}
           >
@@ -206,11 +213,11 @@ export function PidginVoicePlayer({ pidginText, englishText, multilingual, claim
           <div className="space-y-0.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-black text-[#0C2340] flex items-center gap-1.5 font-display">
-                <Volume2 className="w-4 h-4 text-[#005A9C]" />
-                Audio Fact-Check (Naija Voice)
+                <Volume2 className="w-4 h-4 text-[#0fbf4d]" />
+                Audio Fact-Check (Vernacular Speech)
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-[#EAF3FC] border border-[#D5E7FA] text-[10px] font-mono text-[#005A9C] font-bold">
-                🔊 Native Dialect Voice
+              <span className="px-2 py-0.5 rounded-full bg-[#e6f1f8] border border-[#D5E7FA] text-[10px] font-mono text-[#005b9c] font-bold">
+                🔊 Native Nigerian Voices
               </span>
             </div>
             <p className="text-[11px] text-[#64748B] italic line-clamp-1 max-w-sm sm:max-w-md">
@@ -222,23 +229,59 @@ export function PidginVoicePlayer({ pidginText, englishText, multilingual, claim
         {/* Action Button & Equalizer */}
         <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
           {isPlaying ? (
-            <div className="flex items-end gap-1 h-7 px-3 bg-[#EAF3FC] rounded-xl border border-[#D5E7FA] py-1">
-              <span className="w-1 bg-[#005A9C] rounded-full animate-bounce [animation-delay:-0.3s] h-4"></span>
-              <span className="w-1 bg-[#2786D1] rounded-full animate-bounce [animation-delay:-0.15s] h-5"></span>
-              <span className="w-1 bg-[#005A9C] rounded-full animate-bounce h-3"></span>
-              <span className="w-1 bg-[#2786D1] rounded-full animate-bounce [animation-delay:-0.25s] h-4.5"></span>
-              <span className="text-[10px] font-mono text-[#005A9C] font-bold ml-1.5">Reading Aloud...</span>
+            <div className="flex items-end gap-1 h-7 px-3 bg-[#e6f1f8] rounded-xl border border-[#D5E7FA] py-1">
+              <span className="w-1 bg-[#0fbf4d] rounded-full animate-bounce [animation-delay:-0.3s] h-4"></span>
+              <span className="w-1 bg-[#005b9c] rounded-full animate-bounce [animation-delay:-0.15s] h-5"></span>
+              <span className="w-1 bg-[#0fbf4d] rounded-full animate-bounce h-3"></span>
+              <span className="w-1 bg-[#005b9c] rounded-full animate-bounce [animation-delay:-0.25s] h-4.5"></span>
+              <span className="text-[10px] font-mono text-[#005b9c] font-bold ml-1.5">Speaking...</span>
             </div>
           ) : (
             <button
               onClick={handleTogglePlay}
-              className="text-xs font-bold text-[#005A9C] hover:text-[#00477E] flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#EAF3FC] hover:bg-blue-100 border border-[#D5E7FA] transition-all"
+              className="text-xs font-bold text-[#005b9c] hover:text-[#00477E] flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#e6f1f8] hover:bg-blue-100 border border-[#D5E7FA] transition-all cursor-pointer"
             >
-              <Volume2 className="w-4 h-4 text-[#005A9C]" />
+              <Volume2 className="w-4 h-4 text-[#0fbf4d]" />
               <span>Listen Now</span>
             </button>
           )}
         </div>
+      </div>
+
+      {/* 5-Language Vernacular Dialect Selector Pills */}
+      <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-[#D5E7FA]/70">
+        <span className="text-[10px] font-bold text-[#4a6076] uppercase tracking-wider mr-0.5">
+          Listen in:
+        </span>
+        {[
+          { code: 'pcm', label: '🇳🇬 Naija Pidgin' },
+          { code: 'en', label: '🇬🇧 English' },
+          { code: 'yo', label: 'Yorùbá' },
+          { code: 'ha', label: 'Hausa' },
+          { code: 'ig', label: 'Igbo' }
+        ].map((d) => {
+          const isActive = currentDialect === d.code;
+          return (
+            <button
+              key={d.code}
+              type="button"
+              onClick={() => {
+                if (isPlaying) {
+                  window.speechSynthesis.cancel();
+                  setIsPlaying(false);
+                }
+                setCurrentDialect(d.code as any);
+              }}
+              className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                isActive
+                  ? 'bg-[#0fbf4d] text-white shadow-xs font-bold ring-1 ring-emerald-400/40'
+                  : 'bg-[#e6f1f8] hover:bg-[#d9ecfa] text-[#005b9c] border border-[#d5e7fa]'
+              }`}
+            >
+              {d.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

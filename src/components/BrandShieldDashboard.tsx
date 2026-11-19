@@ -168,22 +168,23 @@ export function BrandShieldDashboard({ onOpenSubscriptionModal, appLanguage, ini
     try {
       const res = await fetch(`/api/brand-shield/scan?brand=${encodeURIComponent(brandToQuery)}&entityType=${entityCategory}&lang=${appLanguage || 'en'}`);
       const data = await res.json();
-      if (data && data.brandName) {
-        setScanResult(data);
+      const payload = data?.result || data;
+      if (payload && payload.brandName) {
+        setScanResult(payload);
         const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         setLastScannedTime(timeNow);
 
         setSentinelLogs(prev => [
           {
             timestamp: timeNow,
-            message: `Ingested ${data.recentWeeklyNews?.length || 0} stories & ${data.alerts?.length || 0} signals for ${brandToQuery}`,
-            type: data.alerts?.length > 0 ? 'alert' : 'info'
+            message: `Ingested ${payload.recentWeeklyNews?.length || 0} stories & ${payload.alerts?.length || 0} signals for ${brandToQuery}`,
+            type: payload.alerts?.length > 0 ? 'alert' : 'info'
           },
           ...prev.slice(0, 19)
         ]);
 
-        if (data.recentWeeklyNews && data.recentWeeklyNews.length > 0) {
-          const newest = data.recentWeeklyNews[0];
+        if (payload.recentWeeklyNews && payload.recentWeeklyNews.length > 0) {
+          const newest = payload.recentWeeklyNews[0];
           if (newest.isNewlyIngested) {
             setLatestNewArticleAlert(newest);
           }

@@ -41,8 +41,7 @@ interface AboutSectionProps {
 }
 
 export function AboutSection({ onSelectTab, onOpenPagaModal, appLanguage }: AboutSectionProps) {
-  const { isPidgin: contextIsPidgin, t } = useTranslations();
-  const isPidgin = appLanguage === 'pcm' || contextIsPidgin;
+  const { isPidgin, t, locale } = useTranslations();
   const [activeTab, setActiveTab] = useState<'features' | 'paga' | 'market' | 'pipeline' | 'civic'>('features');
   const [activeStage, setActiveStage] = useState<number>(1);
   const [hasPledged, setHasPledged] = useState(false);

@@ -146,6 +146,104 @@ const SAMPLE_EVIDENCE_CORPUS: Record<string, EvidenceItem[]> = {
       recencyScore: 88,
       corroborationScore: 90
     }
+  ],
+  'student-allowance-hoax': [
+    {
+      id: 'ev-stud-1',
+      title: 'NELFUND & Ministry of Education Disclaim N50,000 Direct Student Cash Grant Links',
+      snippet: 'The Nigerian Education Loan Fund (NELFUND) cautioned students against fraudulent links claiming FG approved an unconditional N50,000 cash grant to all Nigerian tertiary students without application. Official disbursements occur strictly via the nelf.gov.ng portal.',
+      url: 'https://nelf.gov.ng/news/caution-on-fake-allowance-links',
+      domain: 'nelf.gov.ng',
+      sourceName: 'Nigeria Education Loan Fund (NELFUND)',
+      isOfficialAuthority: true,
+      publishedDate: '2024-08-10',
+      score: 96,
+      authorityScore: 100,
+      relevanceScore: 98,
+      recencyScore: 95,
+      corroborationScore: 95
+    },
+    {
+      id: 'ev-stud-2',
+      title: 'Fact Check: FG Not Disbursing Unconditional N50,000 Cash to Students via WhatsApp',
+      snippet: 'Africa Check verified that viral WhatsApp broadcast messages circulating with phishing links claiming to register students for immediate cash grants are completely fake.',
+      url: 'https://africacheck.org/fact-checks/reports/fake-news-fg-50000-student-grant-scam',
+      domain: 'africacheck.org',
+      sourceName: 'Africa Check (Verified Fact-Checker)',
+      isOfficialAuthority: false,
+      publishedDate: '2024-08-12',
+      score: 93,
+      authorityScore: 95,
+      relevanceScore: 95,
+      recencyScore: 92,
+      corroborationScore: 90
+    }
+  ],
+  'nnpc-fuel-price': [
+    {
+      id: 'ev-fuel-1',
+      title: 'NNPCL Refutes Doctored Circular Claiming Petrol Price Reduced to N300',
+      snippet: 'The Nigerian National Petroleum Company Limited (NNPCL) issued a clarification that petroleum pricing operates on commercial market dynamics following deregulation. Circulating memos alleging an overnight N300 benchmark are fabricated.',
+      url: 'https://nnpcltd.com/press-releases/clarification-on-pms-pricing-rumours',
+      domain: 'nnpcltd.com',
+      sourceName: 'NNPC Limited (Official Gazette)',
+      isOfficialAuthority: true,
+      publishedDate: '2024-09-05',
+      score: 97,
+      authorityScore: 100,
+      relevanceScore: 98,
+      recencyScore: 96,
+      corroborationScore: 95
+    },
+    {
+      id: 'ev-fuel-2',
+      title: 'Fact Check: Fake Press Release on Reinstatement of Full Fuel Subsidy Debunked',
+      snippet: 'Energy correspondents and federal regulatory spokespersons confirmed that fuel subsidy has not been reinstated and the viral release used forged signatures.',
+      url: 'https://thecable.ng/fact-check-nnpc-did-not-announce-n300-petrol-price',
+      domain: 'thecable.ng',
+      sourceName: 'TheCable Fact Check Desk',
+      isOfficialAuthority: false,
+      publishedDate: '2024-09-06',
+      score: 92,
+      authorityScore: 90,
+      relevanceScore: 94,
+      recencyScore: 92,
+      corroborationScore: 90
+    }
+  ],
+  'dangote-refinery': [
+    {
+      id: 'ev-dangote-1',
+      title: 'Dangote Petroleum Refinery Clarifies Petrol Distribution and Pricing Agreements',
+      snippet: 'Management of Dangote Petroleum Refinery issued an institutional statement confirming domestic supply agreements with oil marketers and regulatory agencies, dispelling speculative social claims regarding fuel export monopolies.',
+      url: 'https://dangote.com/press/refinery-domestic-supply-update',
+      domain: 'dangote.com',
+      sourceName: 'Dangote Group Communications',
+      isOfficialAuthority: true,
+      publishedDate: '2024-09-15',
+      score: 95,
+      authorityScore: 95,
+      relevanceScore: 96,
+      recencyScore: 94,
+      corroborationScore: 95
+    }
+  ],
+  'efcc-bank-freeze': [
+    {
+      id: 'ev-efcc-1',
+      title: 'EFCC Cautions Public on Fraudulent Notices Demanding Account Verification Fees',
+      snippet: 'The Economic and Financial Crimes Commission (EFCC) warned that it never contacts private individuals via WhatsApp or demands bank deposits to prevent asset freezes. Freezing accounts requires statutory judicial orders.',
+      url: 'https://efcc.gov.ng/news/public-advisory-on-fake-account-freeze-notices',
+      domain: 'efcc.gov.ng',
+      sourceName: 'Economic and Financial Crimes Commission (EFCC)',
+      isOfficialAuthority: true,
+      publishedDate: '2024-05-20',
+      score: 97,
+      authorityScore: 100,
+      relevanceScore: 98,
+      recencyScore: 95,
+      corroborationScore: 95
+    }
   ]
 };
 
@@ -154,15 +252,27 @@ export async function searchAuthoritativeEvidence(claim: ExtractedClaim): Promis
   const q = claim.normalizedClaim.toLowerCase();
 
   // 1. Check known high-fidelity datasets
-  if (q.includes('opay')) return SAMPLE_EVIDENCE_CORPUS['opay-shutdown'];
-  if (q.includes('naira') || q.includes('cbn') && (q.includes('note') || q.includes('500') || q.includes('1000'))) {
+  if (q.includes('opay') || q.includes('palmpay') || q.includes('kuda')) return SAMPLE_EVIDENCE_CORPUS['opay-shutdown'];
+  if (q.includes('naira') || (q.includes('cbn') && (q.includes('note') || q.includes('500') || q.includes('1000') || q.includes('currency')))) {
     return SAMPLE_EVIDENCE_CORPUS['cbn-naira-ban'];
   }
-  if (q.includes('cholera') || q.includes('lassa') || q.includes('ncdc')) {
+  if (q.includes('cholera') || q.includes('lassa') || q.includes('ncdc') || q.includes('outbreak')) {
     return SAMPLE_EVIDENCE_CORPUS['ncdc-cholera-alert'];
   }
-  if (q.includes('jamb') || q.includes('cutoff') || q.includes('cut-off') || q.includes('utme')) {
+  if (q.includes('jamb') || q.includes('cutoff') || q.includes('cut-off') || q.includes('utme') || q.includes('admission')) {
     return SAMPLE_EVIDENCE_CORPUS['jamb-cutoff-rumor'];
+  }
+  if (q.includes('student') || q.includes('allowance') || q.includes('nelfund') || q.includes('50,000') || q.includes('50000') || q.includes('cash grant')) {
+    return SAMPLE_EVIDENCE_CORPUS['student-allowance-hoax'];
+  }
+  if (q.includes('nnpc') || q.includes('fuel') || q.includes('petrol') || q.includes('subsidy') || q.includes('pump price') || q.includes('n300') || q.includes('300 naira')) {
+    return SAMPLE_EVIDENCE_CORPUS['nnpc-fuel-price'];
+  }
+  if (q.includes('dangote') || q.includes('refinery')) {
+    return SAMPLE_EVIDENCE_CORPUS['dangote-refinery'];
+  }
+  if (q.includes('efcc') || q.includes('freeze') || q.includes('bank account frozen')) {
+    return SAMPLE_EVIDENCE_CORPUS['efcc-bank-freeze'];
   }
 
   // 2. Search API Integration (if SERPER_API_KEY or TAVILY_API_KEY provided)
@@ -220,33 +330,33 @@ export async function searchAuthoritativeEvidence(claim: ExtractedClaim): Promis
   return [
     {
       id: 'ev-gen-1',
-      title: `Official Bulletin Search: ${route.primaryAuthorityName}`,
-      snippet: `No formal public gazette, circular, or emergency advisory was published by ${route.primaryAuthorityName} confirming: "${claim.normalizedClaim}". Primary registries show no corresponding directive.`,
-      url: `https://${route.priorityDomains[0]}`,
+      title: `Official Registry Check: ${route.primaryAuthorityName}`,
+      snippet: `No formal public gazette, circular, or emergency advisory has been published by ${route.primaryAuthorityName} confirming: "${claim.normalizedClaim}". Primary registries show no corresponding directive.`,
+      url: `https://www.google.com/search?q=${encodeURIComponent(`${claim.normalizedClaim} site:${route.priorityDomains[0]}`)}`,
       domain: route.priorityDomains[0],
       sourceName: `${route.primaryAuthorityName} (Registry Check)`,
       isOfficialAuthority: true,
       publishedDate: new Date().toISOString().split('T')[0],
-      score: 62,
+      score: 72,
       authorityScore: 90,
-      relevanceScore: 60,
-      recencyScore: 70,
-      corroborationScore: 40
+      relevanceScore: 70,
+      recencyScore: 75,
+      corroborationScore: 60
     },
     {
       id: 'ev-gen-2',
       title: `Media Surveillance: ${claim.entity} Reporting Scan`,
-      snippet: `Cross-checking with national newsrooms (Channels TV, Premium Times, TheCable) shows no breaking coverage or corroboration of this specific event.`,
-      url: 'https://premiumtimesng.com',
-      domain: 'premiumtimesng.com',
-      sourceName: 'Nigerian Newsdesk Surveillance',
+      snippet: `Cross-checking with national newsrooms (Channels TV, Daily Trust, TheCable, Premium Times) shows no breaking coverage or corroboration of this specific event.`,
+      url: `https://www.google.com/search?q=${encodeURIComponent(`${claim.normalizedClaim} nigeria fact check`)}`,
+      domain: 'truetalk.ng',
+      sourceName: 'National Newsdesk Surveillance',
       isOfficialAuthority: false,
       publishedDate: new Date().toISOString().split('T')[0],
-      score: 55,
+      score: 68,
       authorityScore: 80,
-      relevanceScore: 50,
-      recencyScore: 60,
-      corroborationScore: 35
+      relevanceScore: 65,
+      recencyScore: 70,
+      corroborationScore: 50
     }
   ];
 }

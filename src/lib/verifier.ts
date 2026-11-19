@@ -87,18 +87,37 @@ export function verifyClaimWithEvidence(
     // 2. Evaluate from top-ranked evidence
     const snip = `${topEvidence.title} ${topEvidence.snippet}`.toLowerCase();
 
-    if (snip.includes('refutes') || snip.includes('not shutting') || snip.includes('remain legal tender') || snip.includes('denies') || snip.includes('fake') || snip.includes('rebuts')) {
+    if (
+      snip.includes('refutes') ||
+      snip.includes('not shutting') ||
+      snip.includes('remain legal tender') ||
+      snip.includes('denies') ||
+      snip.includes('fake') ||
+      snip.includes('rebuts') ||
+      snip.includes('disclaim') ||
+      snip.includes('cautioned') ||
+      snip.includes('fraudulent') ||
+      snip.includes('hoax') ||
+      snip.includes('fabricated')
+    ) {
       verdict = 'CONTRADICTED';
       confidence = topEvidence.isOfficialAuthority ? 'HIGH' : 'MEDIUM';
-      confidenceScore = topEvidence.isOfficialAuthority ? 94 : 82;
+      confidenceScore = topEvidence.isOfficialAuthority ? 94 : 85;
       shortExplanation = `False: ${topEvidence.sourceName} officially disputed this claim.`;
       pidginExplanation = `Na Lie: ${topEvidence.sourceName} don officially debunk dis claim.`;
       reasoning = `Top evidence from ${topEvidence.sourceName} disproves the claim.`;
       keyQuote = undefined;
-    } else if (snip.includes('activates') || snip.includes('confirms') || snip.includes('public health advisory') || snip.includes('official press release')) {
+    } else if (
+      snip.includes('activates') ||
+      snip.includes('confirms') ||
+      snip.includes('public health advisory') ||
+      snip.includes('official press release') ||
+      snip.includes('agreements') ||
+      snip.includes('verified reporting')
+    ) {
       verdict = 'SUPPORTED';
       confidence = topEvidence.isOfficialAuthority ? 'HIGH' : 'MEDIUM';
-      confidenceScore = topEvidence.isOfficialAuthority ? 95 : 84;
+      confidenceScore = topEvidence.isOfficialAuthority ? 95 : 86;
       shortExplanation = `Verified: ${topEvidence.sourceName} officially confirmed this announcement.`;
       pidginExplanation = `Confirm True: ${topEvidence.sourceName} release notice say na true.`;
       reasoning = `Official bulletin from ${topEvidence.sourceName} confirms the announcement.`;
@@ -106,11 +125,19 @@ export function verifyClaimWithEvidence(
     } else if (snip.includes('benchmark') || snip.includes('clarification') || snip.includes('misconceptions')) {
       verdict = 'MISLEADING';
       confidence = 'MEDIUM';
-      confidenceScore = 80;
+      confidenceScore = 84;
       shortExplanation = `Misleading: Partially accurate, but official guidelines are exaggerated or misapplied.`;
       pidginExplanation = `Half-Truth: Small truth dey, but dem twist am to confuse people.`;
       reasoning = `Context from ${topEvidence.sourceName} shows baseline rules are misapplied.`;
       keyQuote = undefined;
+    } else {
+      // Default evidence evaluated as uncorroborated registry search
+      verdict = 'UNVERIFIED';
+      confidence = 'MEDIUM';
+      confidenceScore = 75;
+      shortExplanation = 'Unverified: No official records confirm or dispute this claim yet across federal registries.';
+      pidginExplanation = 'Unverified: Government or media never confirm am yet. No rush share am.';
+      reasoning = 'Regulatory registries and national surveillance desks return no matching bulletins.';
     }
   } else {
     // Specific Nigerian context matching for custom unrest rumors (e.g. curfew)

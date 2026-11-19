@@ -28,7 +28,7 @@ interface SectionHelpModalProps {
   appLanguage?: AppLanguage;
 }
 
-const READING_BUFFER_MS = 4000;
+const READING_BUFFER_MS = 800;
 
 export function SectionHelpModal({ isOpen, onClose, section, appLanguage }: SectionHelpModalProps) {
   const { isPidgin: contextIsPidgin, locale } = useTranslations();
@@ -148,7 +148,7 @@ export function SectionHelpModal({ isOpen, onClose, section, appLanguage }: Sect
     let speechEndTime = 0;
 
     const useVoice = !isMuted && typeof window !== 'undefined' && 'speechSynthesis' in window;
-    const postSpeechBufferMs = useVoice ? READING_BUFFER_MS : 8000;
+    const postSpeechBufferMs = useVoice ? READING_BUFFER_MS : 1200;
 
     speakStep(activeStep, () => {
       speechDone = true;
@@ -196,87 +196,85 @@ export function SectionHelpModal({ isOpen, onClose, section, appLanguage }: Sect
     switch (activeSection) {
       case 'verify':
         return {
-          title: isPidgin ? 'How to Check Tori (Claim Verification Guide)' : 'How to Use Claim Verification Engine',
-          subtitle: isPidgin
-            ? 'Learn how to verify viral tweets, WhatsApp messages, news links & voice claims against official government proof.'
-            : 'Step-by-step guide to testing circulating claims against live Nigerian regulatory registries.',
+          title: isPidgin ? 'How to Check Tori' : 'Claim Verification Guide',
+          subtitle: '',
           icon: <ShieldCheck className="w-5 h-5 text-[#005b9c]" />,
           steps: [
             {
               step: 1,
-              title: isPidgin ? 'Input Your Claim or Link' : 'Enter Text, Link or Speech',
+              title: isPidgin ? 'Input Claim or Link' : 'Input Claim or Link',
               desc: isPidgin
-                ? 'Copy and paste any message from WhatsApp, tweet from X (Twitter), TikTok post, news URL, or tap the microphone to speak.'
-                : 'Paste viral text, X tweet URL, WhatsApp forward, news headline, or tap the microphone to dictate your claim.',
+                ? 'Copy and paste any claim or post from WhatsApp, X, TikTok, link, or tap the microphone 🎤 to talk.'
+                : 'Paste viral text, post link, WhatsApp message, or tap the microphone 🎤 to speak.',
               mockup: (
                 <div className="p-2.5 rounded-xl bg-[#f4f8fc] border border-[#d5e7fa] space-y-1.5 font-mono text-[10px]">
                   <div className="flex items-center justify-between text-[#4a6076]">
                     <span>STEP 1: INPUT CLAIM / LINK</span>
-                    <span className="text-[#005b9c] font-semibold">Microphone Active 🎙️</span>
                   </div>
-                  <div className="p-2 rounded-lg bg-white border border-[#d5e7fa] text-[#0b2540] flex items-center justify-between gap-2 shadow-2xs">
-                    <span className="truncate text-[#4a6076]">"CBN orders immediate shutdown of bank apps..."</span>
-                    <span className="px-2 py-0.5 rounded bg-[#005b9c] text-white font-bold text-[9px] shrink-0">PASTE</span>
+                  <div className="p-2 rounded-xl bg-white border border-[#d5e7fa] text-[#0b2540] flex items-center justify-between gap-2 shadow-2xs">
+                    <span className="truncate text-[#4a6076] text-xs">"CBN orders immediate shutdown of bank apps..."</span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="w-6 h-6 rounded-lg bg-[#e6f1f8] text-[#005b9c] flex items-center justify-center text-xs">🎤</span>
+                      <span className="w-6 h-6 rounded-lg bg-[#0fbf4d] text-white flex items-center justify-center font-bold text-xs">➔</span>
+                    </div>
                   </div>
                 </div>
               )
             },
             {
               step: 2,
-              title: isPidgin ? 'Upload Screenshot (Optional)' : 'Upload Media Screenshot (Optional)',
+              title: isPidgin ? 'Paste Screenshot' : 'Paste Screenshot',
               desc: isPidgin
-                ? 'You fit also upload picture screenshot of WhatsApp memo or tweet. Our AI Vision go read all the text automatically.'
-                : 'Attach a PNG or JPG screenshot of a viral broadcast or social post. Gemini Vision OCR extracts the text automatically.',
+                ? 'You fit also upload or paste screenshot of WhatsApp memo or tweet.'
+                : 'Attach or paste a screenshot of any message or social post.',
               mockup: (
                 <div className="p-2.5 rounded-xl bg-[#f4f8fc] border border-[#d5e7fa] space-y-1.5 font-mono text-[10px]">
                   <div className="flex items-center justify-between text-[#4a6076]">
-                    <span>STEP 2: SCREENSHOT OCR INSPECTOR</span>
-                    <span className="text-[#005b9c] font-semibold">Gemini Vision OCR</span>
+                    <span>STEP 2: SCREENSHOT ATTACHMENT</span>
                   </div>
-                  <div className="p-2 rounded-lg bg-white border border-dashed border-[#005b9c]/40 flex items-center justify-between shadow-2xs">
+                  <div className="p-2 rounded-xl bg-white border border-[#005b9c]/30 flex items-center justify-between shadow-2xs">
                     <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded bg-[#e6f1f8] text-[#005b9c] flex items-center justify-center font-bold text-[10px]">🖼️</div>
-                      <span className="text-[#0b2540] text-[10px] font-semibold">whatsapp_memo_screenshot.png</span>
+                      <div className="w-6 h-6 rounded-lg bg-[#e6f1f8] text-[#005b9c] flex items-center justify-center font-bold text-xs">🖼️</div>
+                      <span className="text-[#0b2540] text-xs font-semibold">screenshot.png</span>
                     </div>
-                    <span className="text-emerald-700 font-bold text-[9px]">OCR 100% EXTRACTED</span>
+                    <span className="text-[#0fbf4d] font-bold text-[10px]">ATTACHED</span>
                   </div>
                 </div>
               )
             },
             {
               step: 3,
-              title: isPidgin ? 'Click "Verify Claim"' : 'Trigger Verification Pipeline',
+              title: isPidgin ? 'Live Regulator Check' : 'Live Regulator Check',
               desc: isPidgin
-                ? 'Our engine go check official database of CBN, INEC, NCDC, JAMB, WAEC, and certified news desks in real time.'
-                : 'Truetalk queries live regulator databases (CBN, INEC, NCDC) and Google Fact Check APIs using deterministic scoring.',
+                ? 'Our engine checks official government registries and certified fact-checkers in real time.'
+                : 'Queries official government gazettes, certified regulators, and live fact-check registries.',
               mockup: (
                 <div className="p-2.5 rounded-xl bg-[#f4f8fc] border border-[#d5e7fa] space-y-1.5 font-mono text-[10px]">
                   <div className="flex items-center justify-between text-[#4a6076]">
                     <span>STEP 3: LIVE REGULATOR CHECK</span>
-                    <span className="text-[#005b9c] font-semibold">CBN • INEC • NCDC Scanned</span>
                   </div>
-                  <div className="p-2 rounded-lg bg-[#005b9c] text-white font-bold flex items-center justify-between shadow-xs">
-                    <span className="flex items-center gap-1.5">⚡ VERIFY CLAIM NOW</span>
-                    <span className="text-[9px] bg-white/20 text-white px-2 py-0.5 rounded">RUNNING</span>
+                  <div className="p-2 rounded-xl bg-[#0fbf4d] text-white font-bold flex items-center justify-between shadow-xs">
+                    <span className="flex items-center gap-1.5 text-xs">⚡ VERIFY CLAIM</span>
+                    <span className="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded">CHECKING</span>
                   </div>
                 </div>
               )
             },
             {
               step: 4,
-              title: isPidgin ? 'Read Verdict & Listen Audio' : 'Review Factual Verdict & Listen',
+              title: isPidgin ? 'Review Verdict and Sources' : 'Review Verdict and Sources',
               desc: isPidgin
-                ? 'See clear verdict badge (Supported, Contradicted, Misleading, Satire, Unverified) with source link & audio summary in 5 Naija dialects.'
-                : 'Examine official verdict badge, source citations, evidence breakdown, and listen to vernacular TTS audio summary.',
+                ? 'See clear verdict badge with verified source citations and audio summary.'
+                : 'Examine official verdict, verified source citations, and listen to local language audio.',
               mockup: (
                 <div className="p-2.5 rounded-xl bg-[#f4f8fc] border border-[#d5e7fa] space-y-1.5 font-mono text-[10px]">
                   <div className="flex items-center justify-between">
-                    <span className="px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300 font-bold">CONTRADICTED (96%)</span>
-                    <span className="text-[#005b9c] text-[10px] font-semibold">CBN Official Gazette</span>
+                    <span className="px-2.5 py-0.5 rounded-lg bg-rose-100 text-rose-800 border border-rose-300 font-bold text-xs">CONTRADICTED</span>
+                    <span className="text-[#005b9c] text-[10px] font-semibold">Official Gazette</span>
                   </div>
                   <div className="p-1.5 rounded-lg bg-white border border-[#d5e7fa] text-[#0b2540] flex items-center justify-between shadow-2xs">
-                    <span>🔊 Audio Summary (Pidgin / Hausa / Yoruba)</span>
-                    <span className="text-[#005b9c] font-bold">▶ PLAY</span>
+                    <span className="text-xs">🔊 Audio Fact-Check</span>
+                    <span className="text-[#0fbf4d] font-bold text-xs">▶ PLAY</span>
                   </div>
                 </div>
               )
@@ -484,9 +482,6 @@ export function SectionHelpModal({ isOpen, onClose, section, appLanguage }: Sect
               <h2 className="text-base sm:text-xl font-bold text-[#0b2540] tracking-tight">
                 {data.title}
               </h2>
-              <p className="text-xs text-[#4a6076]">
-                {data.subtitle}
-              </p>
             </div>
           </div>
           <button
@@ -500,34 +495,7 @@ export function SectionHelpModal({ isOpen, onClose, section, appLanguage }: Sect
 
         {/* Modal Content */}
         <div className="p-5 sm:p-7 overflow-y-auto space-y-4 sm:space-y-5 text-sm scrollbar-none">
-          {/* Section Selector Tabs */}
-          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 p-1 rounded-2xl bg-slate-100/80 border border-[#D5E7FA]">
-            {[
-              { id: 'verify', label: 'Claim Check', icon: <ShieldCheck className="w-3.5 h-3.5" /> },
-              { id: 'brand_shield', label: 'Brand Shield', icon: <Building2 className="w-3.5 h-3.5" /> },
-              { id: 'heatmap', label: 'Geo Threat Map', icon: <MapPin className="w-3.5 h-3.5" /> },
-            ].map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => {
-                  setActiveSection(t.id as HelpSectionType);
-                  setActiveStep(1);
-                  setIsPlayingDemo(false);
-                }}
-                className={`py-2 px-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  activeSection === t.id
-                    ? 'bg-[#005b9c] text-white shadow-xs font-bold'
-                    : 'text-[#4a6076] hover:text-[#0b2540] hover:bg-white/60'
-                }`}
-              >
-                {t.icon}
-                <span className="truncate">{t.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Animated Progress & Auto-Play Control Bar */}
+          {/* Animated Progress & Controls: Language Choice + Auto-Play Demo Only */}
           <div className="space-y-2 p-3.5 rounded-2xl bg-white border border-[#D5E7FA] shadow-xs">
             <div className="flex items-center justify-between text-xs font-semibold">
               <span className="text-[#005b9c] flex items-center gap-1.5">
@@ -538,7 +506,7 @@ export function SectionHelpModal({ isOpen, onClose, section, appLanguage }: Sect
                 <button
                   type="button"
                   onClick={() => setVoiceLang(voiceLang === 'pcm' ? 'en' : 'pcm')}
-                  className="px-2 py-0.5 rounded-md bg-[#e6f1f8] text-[#005b9c] text-[10px] font-bold border border-[#d5e7fa] cursor-pointer"
+                  className="px-2.5 py-1 rounded-xl bg-[#e6f1f8] hover:bg-[#d9ecfa] text-[#005b9c] text-[11px] font-bold border border-[#d5e7fa] transition-colors cursor-pointer"
                 >
                   {voiceLang === 'pcm' ? '🇳🇬 NAIJA PIDGIN' : '🇬🇧 ENGLISH'}
                 </button>
@@ -575,28 +543,9 @@ export function SectionHelpModal({ isOpen, onClose, section, appLanguage }: Sect
             {/* Total Progress Bar */}
             <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
               <div
-                className="bg-[#005b9c] h-full transition-all duration-300 rounded-full"
+                className="bg-[#0fbf4d] h-full transition-all duration-300 rounded-full"
                 style={{ width: `${(activeStep / 4) * 100}%` }}
               />
-            </div>
-          </div>
-
-          {/* Voice Narrator Transcript Box */}
-          <div className="p-3 rounded-2xl bg-[#e6f1f8] border border-[#d5e7fa] flex items-start gap-3">
-            <div className="flex items-end gap-1 h-5 shrink-0 pt-0.5">
-              <span className={`w-1 bg-[#005b9c] rounded-full transition-all ${isPlayingDemo ? 'animate-audio-wave-1 h-4' : 'h-2'}`} />
-              <span className={`w-1 bg-[#005b9c] rounded-full transition-all ${isPlayingDemo ? 'animate-audio-wave-2 h-5' : 'h-3'}`} />
-              <span className={`w-1 bg-[#005b9c] rounded-full transition-all ${isPlayingDemo ? 'animate-audio-wave-3 h-4' : 'h-2'}`} />
-              <span className={`w-1 bg-[#005b9c] rounded-full transition-all ${isPlayingDemo ? 'animate-audio-wave-4 h-5' : 'h-3'}`} />
-            </div>
-
-            <div className="space-y-0.5 text-xs">
-              <span className="text-[10px] font-bold text-[#005b9c] uppercase tracking-wider block">
-                🎙️ Audio Voice Guide (Step {currentStepData.step} of 4):
-              </span>
-              <p className="text-[#0b2540] font-medium leading-relaxed">
-                "{currentStepData.title}: {currentStepData.desc}"
-              </p>
             </div>
           </div>
 

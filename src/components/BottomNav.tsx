@@ -60,7 +60,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onSelectTab, cl
             onClick={() => onSelectTab(item.id)}
             className={`relative flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-5 py-1.5 sm:py-2.5 rounded-[14px] sm:rounded-[16px] text-xs sm:text-[14px] font-medium transition-all duration-200 select-none ${
               isActive
-                ? 'bg-white/16 text-white font-semibold shadow-inner ring-1 ring-white/20'
+                ? 'bg-[#0fbf4d] text-white font-semibold shadow-md ring-1 ring-emerald-300/40'
                 : 'text-white/75 hover:text-white hover:bg-white/10'
             }`}
           >

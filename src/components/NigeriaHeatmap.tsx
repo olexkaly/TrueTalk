@@ -201,11 +201,23 @@ export function NigeriaHeatmap({ onSelectClaim }: NigeriaHeatmapProps) {
     }
   });
 
-  const filteredRumours = selectedZone === 'ALL'
-    ? rumours
-    : rumours.filter(r => r.zone === selectedZone);
+  // Ensure strictly 1 rumor per geopolitical zone when ALL is selected
+  const displayedRumours = React.useMemo(() => {
+    if (selectedZone !== 'ALL') {
+      return rumours.filter(r => r.zone === selectedZone);
+    }
+    const seenZones = new Set<string>();
+    const onePerZone: LiveRegionalRumour[] = [];
+    for (const r of rumours) {
+      if (!seenZones.has(r.zone)) {
+        seenZones.add(r.zone);
+        onePerZone.push(r);
+      }
+    }
+    return onePerZone;
+  }, [rumours, selectedZone]);
 
-  const activeFocus = selectedRumour || filteredRumours[0] || rumours[0];
+  const activeFocus = selectedRumour || displayedRumours[0] || rumours[0];
 
   return (
     <div className="space-y-6">
@@ -275,14 +287,16 @@ export function NigeriaHeatmap({ onSelectClaim }: NigeriaHeatmapProps) {
                 </h3>
               </div>
               <span className="text-[11px] font-mono text-[#64748B]">
-                {t('map.activeItems', { count: filteredRumours.length })}
+                {t('map.activeItems', { count: displayedRumours.length })}
               </span>
             </div>
 
             {/* List of rumors */}
             <div className="space-y-2.5 max-h-[460px] overflow-y-auto pr-1">
-              {filteredRumours.map((r) => {
+              {displayedRumours.map((r) => {
                 const isSelected = activeFocus?.id === r.id;
+                const singleSource = r.source.split('&')[0].split('•')[0].trim();
+
                 return (
                   <div
                     key={r.id}
@@ -293,27 +307,22 @@ export function NigeriaHeatmap({ onSelectClaim }: NigeriaHeatmapProps) {
                         : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}
                   >
+                    {/* Top: Just Geopolitical Zone */}
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-[#0C2340]">
-                        {r.state} ({r.zone})
-                      </span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        r.velocity === 'CRITICAL' ? 'bg-rose-100 text-rose-700 animate-pulse' : 'bg-amber-100 text-amber-700'
-                      }`}>
-                        {r.velocity === 'CRITICAL' ? t('map.criticalVelocity') : t('map.highVelocity')}
+                      <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#e6f1f8] text-[#005b9c]">
+                        {r.zone}
                       </span>
                     </div>
 
-                    <h4 className="font-bold text-[#0C2340] leading-snug">
+                    {/* Headline */}
+                    <h4 className="font-bold text-[#0b2540] leading-snug">
                       {r.title}
                     </h4>
-                    <p className="text-[11px] text-[#64748B] mt-1 line-clamp-2">
-                      {r.summary}
-                    </p>
 
-                    <div className="mt-2 pt-2 border-t border-[#D5E7FA] flex items-center justify-between">
-                      <span className="text-[10px] text-[#64748B]">
-                        {t('map.source', { source: r.source })}
+                    {/* Bottom: One Source + Verify Button */}
+                    <div className="mt-2.5 pt-2 border-t border-[#D5E7FA] flex items-center justify-between gap-2">
+                      <span className="text-[10px] text-[#4a6076] truncate max-w-[170px] sm:max-w-[210px]">
+                        Source: {singleSource}
                       </span>
                       {onSelectClaim && (
                         <button
@@ -321,7 +330,7 @@ export function NigeriaHeatmap({ onSelectClaim }: NigeriaHeatmapProps) {
                             e.stopPropagation();
                             onSelectClaim(r.title);
                           }}
-                          className="px-2 py-1 rounded-lg bg-[#005A9C] text-white text-[10px] font-bold hover:bg-[#00477E] transition-colors cursor-pointer"
+                          className="px-2.5 py-1 rounded-lg bg-[#0fbf4d] hover:bg-[#0da843] text-white text-[10px] font-bold transition-colors cursor-pointer shrink-0 shadow-2xs"
                         >
                           {t('map.verifyClaimBtn')}
                         </button>
